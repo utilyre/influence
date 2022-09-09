@@ -1,0 +1,64 @@
+version: "3"
+
+networks:
+  influence:
+    name: influence
+    driver: bridge
+
+volumes:
+  data:
+  gopath:
+
+services:
+  database:
+    image: mysql:8.0.30
+    restart: always
+    command: --port ${DATABASE_PORT}
+    environment:
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASS}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+    volumes:
+      - data:/var/lib/mysql
+    hostname: ${DATABASE_HOST}
+    networks:
+      - influence
+    expose:
+      - ${DATABASE_PORT}
+
+  server:
+    depends_on:
+      - database
+    image: cosmtrek/air:v1.40.4
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASS=${DATABASE_PASS}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - SERVER_PORT=${SERVER_PORT}
+    working_dir: /app
+    volumes:
+      - gopath:/go
+      - ./server:/app
+    networks:
+      - influence
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+
+  client:
+    depends_on:
+      - database
+      - server
+    image: node:18.7.0-alpine
+    command: npm run dev
+    environment:
+      - VITE_SERVER_PORT=${SERVER_PORT}
+      - VITE_CLIENT_PORT=${CLIENT_PORT}
+    working_dir: /app
+    volumes:
+      - ./client:/app
+    networks:
+      - influence
+    ports:
+      - ${CLIENT_PORT}:${CLIENT_PORT}
