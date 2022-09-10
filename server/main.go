@@ -17,7 +17,7 @@ func main() {
 	}
 
 	app := fiber.New()
-  setupRoutes(app)
+	setupRoutes(app)
 
 	addr := fmt.Sprintf("0.0.0.0:%s", os.Getenv("SERVER_PORT"))
 	app.Listen(addr)
@@ -26,5 +26,7 @@ func main() {
 func setupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
-	routes.SetupUserRoutes(api)
+	users := api.Group("/users")
+	users.Post("/signup", routes.SignUp)
+	users.Post("/signin", routes.SignIn)
 }

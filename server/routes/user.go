@@ -12,21 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func SetupUserRoutes(r fiber.Router) {
-	users := r.Group("/users")
-
-	users.Post("/", registerUser)
-	users.Post("/login", loginUser)
-
-	// BUG: security issue (remove later)
-	users.Get("/", func(c *fiber.Ctx) error {
-		var users []models.User
-		database.Instance.Find(&users)
-		return c.JSON(users)
-	})
-}
-
-func registerUser(c *fiber.Ctx) error {
+func SignUp(c *fiber.Ctx) error {
 	var user models.User
 	if err := c.BodyParser(&user); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -54,7 +40,7 @@ func registerUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
-func loginUser(c *fiber.Ctx) error {
+func SignIn(c *fiber.Ctx) error {
 	var user models.User
 	if err := c.BodyParser(&user); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
