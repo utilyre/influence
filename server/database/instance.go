@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"os"
+	"server/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -37,7 +38,7 @@ func Connect() error {
 		return err
 	}
 
-	// TODO: automigrate
+	db.AutoMigrate(&models.User{})
 
 	Instance = db
 	return nil

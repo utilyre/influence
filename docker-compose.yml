@@ -31,6 +31,7 @@ services:
     depends_on:
       - database
     image: cosmtrek/air:v1.40.4
+    restart: always
     environment:
       - DATABASE_HOST=${DATABASE_HOST}
       - DATABASE_PORT=${DATABASE_PORT}
@@ -38,6 +39,7 @@ services:
       - DATABASE_PASS=${DATABASE_PASS}
       - DATABASE_NAME=${DATABASE_NAME}
       - SERVER_PORT=${SERVER_PORT}
+      - SERVER_ACCESS_TOKEN_SECRET=${SERVER_ACCESS_TOKEN_SECRET}
     working_dir: /app
     volumes:
       - gopath:/go
@@ -52,6 +54,7 @@ services:
       - database
       - server
     image: node:18.7.0-alpine
+    restart: always
     command: npm run dev
     environment:
       - VITE_SERVER_PORT=${SERVER_PORT}
