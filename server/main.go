@@ -40,4 +40,5 @@ func setupRoutes(app *fiber.App) {
 	blogs.Get("/:id?", routes.GetBlogs)
 	blogs.Use(auth)
 	blogs.Post("/", routes.CreateBlog)
+	blogs.Put("/:id", routes.UpdateBlog)
 }

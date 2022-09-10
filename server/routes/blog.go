@@ -68,8 +68,7 @@ func CreateBlog(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
-	email := claims["email"].(string)
+	email := getEmailViaLocals(c)
 
 	var user models.User
 	if err := findUser(email, &user); err != nil {
@@ -85,4 +84,44 @@ func CreateBlog(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(blog)
+}
+
+func getEmailViaLocals(c *fiber.Ctx) string {
+	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
+	return claims["email"].(string)
+}
+
+func UpdateBlog(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	var blog models.Blog
+	if err := c.BodyParser(&blog); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(&blog); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	var found models.Blog
+	if err := findBlog(uint(id), &found); err != nil {
+		return err
+	}
+
+	email := getEmailViaLocals(c)
+	if found.User.Email != email {
+		return fiber.NewError(fiber.StatusUnauthorized, "malformed token")
+	}
+
+	found.Apply(blog)
+
+	if err := database.Instance.Save(&found).Error; err != nil {
+		return fiber.ErrInternalServerError
+	}
+
+	return c.Status(fiber.StatusOK).JSON(found)
 }

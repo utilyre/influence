@@ -13,3 +13,8 @@ type Blog struct {
 	Title   string `json:"title" validate:"required,min=8,max=64" gorm:"not null"`
 	Content string `json:"content" validate:"required,min=16,max=1024" gorm:"not null"`
 }
+
+func (b *Blog) Apply(blog Blog) {
+	b.Title = blog.Title
+	b.Content = blog.Content
+}
