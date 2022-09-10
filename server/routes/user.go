@@ -52,16 +52,14 @@ func SignIn(c *fiber.Ctx) error {
 	}
 
 	var found models.User
-	if err := database.Instance.Where(&models.User{Email: user.Email}).Take(&found).Error; err != nil {
-		return fiber.NewError(fiber.StatusNotFound, err.Error())
-	}
+	findUser(user.Email, &found)
 
 	if err := bcrypt.CompareHashAndPassword([]byte(found.Password), []byte(user.Password)); err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"exp":   time.Now().Add(time.Hour),
+		"exp":   time.Now().Add(time.Hour).Unix(),
 		"email": found.Email,
 	})
 
@@ -71,6 +69,14 @@ func SignIn(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"access_token": signed,
+		"token": signed,
 	})
+}
+
+func findUser(email string, user *models.User) *fiber.Error {
+	if err := database.Instance.Where(&models.User{Email: email}).Take(&user).Error; err != nil {
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
+	}
+
+	return nil
 }

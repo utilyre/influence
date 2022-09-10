@@ -38,7 +38,7 @@ func Connect() error {
 		return err
 	}
 
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.User{}, &models.Blog{})
 
 	Instance = db
 	return nil

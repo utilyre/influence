@@ -9,5 +9,5 @@ type User struct {
 
 	Name     string `json:"name" validate:"required,min=3" gorm:"not null"`
 	Email    string `json:"email" validate:"required,email" gorm:"unique;not null"`
-	Password string `json:"password" validate:"required,min=8,max=256" gorm:"not null"`
+	Password string `json:"password,omitempty" validate:"required,min=8,max=256" gorm:"not null"`
 }
