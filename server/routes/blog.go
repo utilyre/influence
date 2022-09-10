@@ -48,7 +48,7 @@ func findBlogs(blogs *[]models.Blog) *fiber.Error {
 }
 
 func findBlog(id uint, blog *models.Blog) *fiber.Error {
-	if err := database.Instance.Where(&models.Blog{ID: uint(id)}).Preload("User").Take(&blog).Error; err != nil {
+	if err := database.Instance.Where(&models.Blog{ID: id}).Preload("User").Take(&blog).Error; err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
@@ -124,4 +124,27 @@ func UpdateBlog(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(found)
+}
+
+func DeleteBlog(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	var found models.Blog
+	if err := findBlog(uint(id), &found); err != nil {
+		return err
+	}
+
+	email := getEmailViaLocals(c)
+	if found.User.Email != email {
+		return fiber.NewError(fiber.StatusUnauthorized, "malformed token")
+	}
+
+	if err := database.Instance.Delete(&found).Error; err != nil {
+		return fiber.ErrInternalServerError
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

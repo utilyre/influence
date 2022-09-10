@@ -41,4 +41,5 @@ func setupRoutes(app *fiber.App) {
 	blogs.Use(auth)
 	blogs.Post("/", routes.CreateBlog)
 	blogs.Put("/:id", routes.UpdateBlog)
+	blogs.Delete("/:id", routes.DeleteBlog)
 }
