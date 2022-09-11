@@ -36,23 +36,23 @@ func GetBlogs(c *fiber.Ctx) error {
 }
 
 func findBlogs(blogs *[]models.Blog) *fiber.Error {
-	if err := database.Instance.Preload("User").Find(blogs).Error; err != nil {
+	if err := database.Instance.Preload("Author").Find(blogs).Error; err != nil {
 		return fiber.ErrInternalServerError
 	}
 
 	for i := range *blogs {
-		(*blogs)[i].User.Password = ""
+		(*blogs)[i].Author.Password = ""
 	}
 
 	return nil
 }
 
 func findBlog(id uint, blog *models.Blog) *fiber.Error {
-	if err := database.Instance.Where(&models.Blog{ID: id}).Preload("User").Take(&blog).Error; err != nil {
+	if err := database.Instance.Where(&models.Blog{ID: id}).Preload("Author").Take(&blog).Error; err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
-	blog.User.Password = ""
+	blog.Author.Password = ""
 
 	return nil
 }
@@ -75,9 +75,9 @@ func CreateBlog(c *fiber.Ctx) error {
 		return err
 	}
 
-	blog.UserID = user.ID
-	blog.User = user
-	blog.User.Password = ""
+	blog.AuthorID = user.ID
+	blog.Author = user
+	blog.Author.Password = ""
 
 	if err := database.Instance.Create(&blog).Error; err != nil {
 		return fiber.ErrInternalServerError
@@ -113,7 +113,7 @@ func UpdateBlog(c *fiber.Ctx) error {
 	}
 
 	email := getEmailViaLocals(c)
-	if found.User.Email != email {
+	if found.Author.Email != email {
 		return fiber.NewError(fiber.StatusUnauthorized, "malformed token")
 	}
 
@@ -138,7 +138,7 @@ func DeleteBlog(c *fiber.Ctx) error {
 	}
 
 	email := getEmailViaLocals(c)
-	if found.User.Email != email {
+	if found.Author.Email != email {
 		return fiber.NewError(fiber.StatusUnauthorized, "malformed token")
 	}
 
