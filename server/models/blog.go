@@ -1,8 +1,11 @@
 package models
 
 import (
+	"errors"
 	"time"
 
+	"github.com/go-playground/locales/en"
+	"github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -20,7 +23,21 @@ type Blog struct {
 
 func (b *Blog) Validate(exceptions ...string) error {
 	validate := validator.New()
-	return validate.StructExcept(b, exceptions...)
+	err := validate.StructExcept(b, exceptions...)
+	if err == nil {
+		return nil
+	}
+
+	errs := err.(validator.ValidationErrors)
+	translator := ut.New(en.New())
+	translations := errs.Translate(translator.GetFallback())
+
+	text := ""
+	for _, tag := range translations {
+		text += tag + "\n"
+	}
+
+	return errors.New(text)
 }
 
 func (b *Blog) Merge(blog Blog) {
