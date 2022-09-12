@@ -114,7 +114,7 @@ func UpdateBlog(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusUnauthorized, "malformed token")
 	}
 
-	found.Apply(blog)
+	found.Merge(blog)
 
 	if err := database.Instance.Save(&found).Error; err != nil {
 		return fiber.ErrInternalServerError

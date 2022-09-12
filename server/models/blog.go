@@ -23,7 +23,7 @@ func (b *Blog) Validate(exceptions ...string) error {
 	return validate.StructExcept(b, exceptions...)
 }
 
-func (b *Blog) Apply(blog Blog) {
+func (b *Blog) Merge(blog Blog) {
 	b.Title = blog.Title
 	b.Content = blog.Content
 }
