@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import toKebabcase from '../utils/toKebabcase'
 import { useBlogs } from '../contexts/BlogsProvider'
+import Button from '../styled/Button'
 
 const Form = styled.form`
   display: flex;
@@ -41,20 +42,6 @@ const Textarea = styled.textarea`
 
   &:focus {
     border-color: #2f2f2f;
-  }
-`
-
-const Button = styled.button`
-  height: 4em;
-  width: 150px;
-  background-color: #1a1a1a;
-  border: 1px solid #282828;
-  align-self: center;
-  cursor: pointer;
-  transition: 300ms ease background-color;
-
-  &:hover {
-    background-color: #161616;
   }
 `
 
@@ -98,7 +85,9 @@ const NewBlog = () => {
         onChange={(e) => setContent(e.target.value)}
       ></Textarea>
 
-      <Button type='submit'>Create</Button>
+      <Button type='submit' className='centered'>
+        Create
+      </Button>
     </Form>
   )
 }

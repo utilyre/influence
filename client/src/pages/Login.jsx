@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useUser } from '../contexts/UserProvider'
+import Button from '../styled/Button'
 
 const Form = styled.form`
   display: flex;
@@ -36,27 +37,6 @@ const Input = styled.input`
 
   &:focus {
     border-bottom-color: #d95024;
-  }
-`
-
-const Button = styled.button`
-  background-color: #3e83e3;
-  border: none;
-  border-radius: 0.25em;
-  height: 2.5em;
-  width: 10em;
-  margin-inline: auto;
-  cursor: pointer;
-  transition: 300ms ease background-color;
-  margin-block-start: 1em;
-
-  &:hover {
-    background-color: #5391e6;
-  }
-
-  &:focus {
-    outline: #3e83e3 solid 3px;
-    outline-offset: 0.5em;
   }
 `
 
