@@ -6,7 +6,6 @@ import (
 	"server/models"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -18,8 +17,7 @@ func SignUp(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	validate := validator.New()
-	if err := validate.Struct(&user); err != nil {
+	if err := user.Validate(); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
@@ -46,8 +44,7 @@ func SignIn(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	validate := validator.New()
-	if err := validate.StructExcept(&user, "Name"); err != nil {
+	if err := user.Validate("Name"); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 

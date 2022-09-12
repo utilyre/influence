@@ -6,7 +6,6 @@ import (
 	"server/models"
 	"strconv"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -63,8 +62,7 @@ func CreateBlog(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	validate := validator.New()
-	if err := validate.Struct(&blog); err != nil {
+	if err := blog.Validate(); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
@@ -102,8 +100,7 @@ func UpdateBlog(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	validate := validator.New()
-	if err := validate.Struct(&blog); err != nil {
+	if err := blog.Validate(); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
