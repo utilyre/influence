@@ -34,9 +34,7 @@ const Blogs = () => {
       {blogs.map((blog) => (
         <Item key={blog.id}>
           <Title>
-            <StyledLink to={`/blogs/${blog.id}`}>
-              {blog.title}
-            </StyledLink>
+            <StyledLink to={`/blogs/${blog.id}`}>{blog.title}</StyledLink>
           </Title>
         </Item>
       ))}
