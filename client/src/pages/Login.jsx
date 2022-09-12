@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import PropTypes from 'prop-types'
 import { Navigate } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -59,12 +60,13 @@ const Button = styled.button`
   }
 `
 
-const Login = () => {
+const Login = ({ signUp: isSignUp }) => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const nameRef = useRef()
+  const emailRef = useRef()
 
   const { user, setUser } = useUser()
 
@@ -80,24 +82,33 @@ const Login = () => {
   }
 
   useEffect(() => {
-    nameRef.current?.focus()
+    if (isSignUp) {
+      nameRef.current?.focus()
+    } else {
+      emailRef.current?.focus()
+    }
   }, [])
 
   return user === null ? (
     <Form onSubmit={submitHandler}>
-      <Label>Name</Label>
-      <Input
-        type='text'
-        required
-        ref={nameRef}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+      {isSignUp && (
+        <>
+          <Label>Name</Label>
+          <Input
+            type='text'
+            required
+            ref={nameRef}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </>
+      )}
 
       <Label>Email</Label>
       <Input
         type='email'
         required
+        ref={emailRef}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
@@ -115,6 +126,10 @@ const Login = () => {
   ) : (
     <Navigate replace to='/' />
   )
+}
+
+Login.propTypes = {
+  signUp: PropTypes.bool,
 }
 
 export default Login
