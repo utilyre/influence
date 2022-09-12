@@ -21,7 +21,7 @@ const UserProvider = ({ children }) => {
 }
 
 UserProvider.propTypes = {
-  children: PropTypes.element,
+  children: PropTypes.any,
 }
 
 export default UserProvider

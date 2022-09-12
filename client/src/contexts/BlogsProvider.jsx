@@ -99,7 +99,7 @@ const BlogsProvider = ({ children }) => {
 }
 
 BlogsProvider.propTypes = {
-  children: PropTypes.element,
+  children: PropTypes.any,
 }
 
 export default BlogsProvider
