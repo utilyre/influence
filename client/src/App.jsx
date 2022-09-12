@@ -37,7 +37,7 @@ const App = () => {
 
           <Route path='/blogs'>
             <Route index element={<Blogs />} />
-            <Route path=':title' element={<Blog />} />
+            <Route path=':id' element={<Blog />} />
             <Route path='new' element={<NewBlog />} />
           </Route>
         </Routes>

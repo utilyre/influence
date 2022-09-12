@@ -89,6 +89,9 @@ const BlogsProvider = ({ children }) => {
   const createBlog = (title, content) => {
     setBlogs((prev) => [...prev, { id: lastId + 1, title, content }])
     setLastId((prev) => prev + 1)
+
+    // BUG: It's not state safe
+    return lastId + 1
   }
 
   return (

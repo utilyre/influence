@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import toKebabcase from '../utils/toKebabcase'
 import { useBlogs } from '../contexts/BlogsProvider'
 import Button from '../styled/Button'
 
@@ -57,8 +56,8 @@ const NewBlog = () => {
   const submitHandler = (e) => {
     e.preventDefault()
 
-    createBlog(title, content)
-    navigate(`/blogs/${toKebabcase(title)}`, {
+    const id = createBlog(title, content)
+    navigate(`/blogs/${id}`, {
       replace: true,
     })
   }

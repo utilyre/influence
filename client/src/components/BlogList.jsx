@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useBlogs } from '../contexts/BlogsProvider'
-import toKebabcase from '../utils/toKebabcase'
 
 const Container = styled.div`
   border: 2px #282828 solid;
@@ -35,7 +34,7 @@ const Blogs = () => {
       {blogs.map((blog) => (
         <Item key={blog.id}>
           <Title>
-            <StyledLink to={`/blogs/${toKebabcase(blog.title)}`}>
+            <StyledLink to={`/blogs/${blog.id}`}>
               {blog.title}
             </StyledLink>
           </Title>
