@@ -29,10 +29,14 @@ const App = () => {
       <Main>
         <Routes>
           <Route path='/' element={<Home />} />
+
           <Route path='/login' element={<Login />} />
-          <Route path='/blogs' element={<Blogs />} />
-          <Route path='/blogs/:title' element={<Blog />} />
-          <Route path='/blogs/new' element={<NewBlog />} />
+
+          <Route path='/blogs'>
+            <Route index element={<Blogs />} />
+            <Route path=':title' element={<Blog />} />
+            <Route path='new' element={<NewBlog />} />
+          </Route>
         </Routes>
       </Main>
     </>
