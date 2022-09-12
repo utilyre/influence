@@ -14,6 +14,11 @@ const HorizontalList = styled.ul`
   border-bottom: #1b1b1b solid 2px;
 `
 
+const Item = styled.li`
+  display: flex;
+  gap: 1em;
+`
+
 const StyledNavLink = styled(NavLink)`
   text-decoration: none;
   color: #ffffff;
@@ -31,18 +36,19 @@ const Navigation = () => {
 
   return (
     <HorizontalList>
-      <li>
+      <Item>
         <StyledNavLink to='/'>Home</StyledNavLink>
-      </li>
+      </Item>
 
-      <li>
+      <Item>
         <StyledNavLink to='/blogs'>Blogs</StyledNavLink>
-      </li>
+      </Item>
 
       {user === null && (
-        <li>
-          <StyledNavLink to='/login'>Login</StyledNavLink>
-        </li>
+        <Item>
+          <StyledNavLink to='/signin'>Sign In</StyledNavLink>
+          <StyledNavLink to='/signup'>Sign Up</StyledNavLink>
+        </Item>
       )}
     </HorizontalList>
   )
