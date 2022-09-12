@@ -70,7 +70,7 @@ func SignIn(c *fiber.Ctx) error {
 	})
 }
 
-func findUser(email string, user *models.User) *fiber.Error {
+func findUser(email string, user *models.User) error {
 	if err := database.Instance.Where(&models.User{Email: email}).Take(&user).Error; err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}

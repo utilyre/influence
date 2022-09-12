@@ -34,7 +34,7 @@ func GetBlogs(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(blog)
 }
 
-func findBlogs(blogs *[]models.Blog) *fiber.Error {
+func findBlogs(blogs *[]models.Blog) error {
 	if err := database.Instance.Preload("Author").Find(blogs).Error; err != nil {
 		return fiber.ErrInternalServerError
 	}
@@ -46,7 +46,7 @@ func findBlogs(blogs *[]models.Blog) *fiber.Error {
 	return nil
 }
 
-func findBlog(id uint, blog *models.Blog) *fiber.Error {
+func findBlog(id uint, blog *models.Blog) error {
 	if err := database.Instance.Where(&models.Blog{ID: id}).Preload("Author").Take(&blog).Error; err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
