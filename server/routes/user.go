@@ -77,3 +77,16 @@ func findUser(email string, user *models.User) error {
 
 	return nil
 }
+
+func WhoAmI(c *fiber.Ctx) error {
+	email := getEmailViaLocals(c)
+
+	var user models.User
+	if err := findUser(email, &user); err != nil {
+		return err
+	}
+
+	user.Password = ""
+
+	return c.Status(fiber.StatusOK).JSON(user)
+}
