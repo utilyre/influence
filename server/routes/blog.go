@@ -120,8 +120,8 @@ func UpdateBlog(c *fiber.Ctx) error {
 	}
 
 	email := getEmailViaLocals(c)
-	if found.Author.Email != email {
-		return fiber.NewError(fiber.StatusUnauthorized, "malformed token")
+	if err := authorizeEmail(email, found); err != nil {
+		return err
 	}
 
 	found.Merge(blog)
@@ -145,8 +145,8 @@ func DeleteBlog(c *fiber.Ctx) error {
 	}
 
 	email := getEmailViaLocals(c)
-	if found.Author.Email != email {
-		return fiber.NewError(fiber.StatusUnauthorized, "malformed token")
+	if err := authorizeEmail(email, found); err != nil {
+		return err
 	}
 
 	if err := database.Instance.Delete(&found).Error; err != nil {
@@ -154,4 +154,12 @@ func DeleteBlog(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+func authorizeEmail(email string, blog models.Blog) error {
+	if email != blog.Author.Email {
+		return fiber.NewError(fiber.StatusUnauthorized, "user not authorized")
+	}
+
+	return nil
 }
