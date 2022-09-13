@@ -17,18 +17,27 @@ func GetBlogs(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(blogs)
 }
 
-func GetBlog(c *fiber.Ctx) error {
+func getIDParam(c *fiber.Ctx) (uint, error) {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return 0, fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	if id <= 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
+		return 0, fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
+	}
+
+	return uint(id), nil
+}
+
+func GetBlog(c *fiber.Ctx) error {
+	id, err := getIDParam(c)
+	if err != nil {
+		return err
 	}
 
 	var blog models.Blog
-	if err := findBlog(uint(id), &blog); err != nil {
+	if err := findBlog(id, &blog); err != nil {
 		return err
 	}
 
@@ -91,13 +100,9 @@ func getEmailViaLocals(c *fiber.Ctx) string {
 }
 
 func UpdateBlog(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+	id, err := getIDParam(c)
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	if id <= 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
+		return err
 	}
 
 	var blog models.Blog
@@ -110,7 +115,7 @@ func UpdateBlog(c *fiber.Ctx) error {
 	}
 
 	var found models.Blog
-	if err := findBlog(uint(id), &found); err != nil {
+	if err := findBlog(id, &found); err != nil {
 		return err
 	}
 
@@ -129,17 +134,13 @@ func UpdateBlog(c *fiber.Ctx) error {
 }
 
 func DeleteBlog(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+	id, err := getIDParam(c)
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	if id <= 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
+		return err
 	}
 
 	var found models.Blog
-	if err := findBlog(uint(id), &found); err != nil {
+	if err := findBlog(id, &found); err != nil {
 		return err
 	}
 
