@@ -11,14 +11,22 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func SignUp(c *fiber.Ctx) error {
-	var user models.User
+func parseAndValidateUser(c *fiber.Ctx, user *models.User, exceptions ...string) error {
 	if err := c.BodyParser(&user); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	if err := user.Validate(); err != nil {
+	if err := user.Validate(exceptions...); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return nil
+}
+
+func SignUp(c *fiber.Ctx) error {
+	var user models.User
+	if err := parseAndValidateUser(c, &user); err != nil {
+		return err
 	}
 
 	password := user.Password
@@ -40,12 +48,8 @@ func SignUp(c *fiber.Ctx) error {
 
 func SignIn(c *fiber.Ctx) error {
 	var user models.User
-	if err := c.BodyParser(&user); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	if err := user.Validate("Name"); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	if err := parseAndValidateUser(c, &user, "Name"); err != nil {
+		return err
 	}
 
 	var found models.User
