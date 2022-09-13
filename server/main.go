@@ -39,7 +39,8 @@ func setupRoutes(app *fiber.App) {
 	users.Get("/whoami", routes.WhoAmI)
 
 	blogs := api.Group("/blogs")
-	blogs.Get("/:id?", routes.GetBlogs)
+	blogs.Get("/", routes.GetBlogs)
+	blogs.Get("/:id", routes.GetBlog)
 	blogs.Use(auth)
 	blogs.Post("/", routes.CreateBlog)
 	blogs.Put("/:id", routes.UpdateBlog)

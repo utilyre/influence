@@ -1,29 +1,26 @@
 package routes
 
 import (
-	"fmt"
 	"server/database"
 	"server/models"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 )
 
 func GetBlogs(c *fiber.Ctx) error {
-	strID := c.Params("id")
-	if strID == "" {
-		var blogs []models.Blog
-		if err := findBlogs(&blogs); err != nil {
-			return err
-		}
-
-		return c.Status(fiber.StatusOK).JSON(blogs)
+	var blogs []models.Blog
+	if err := findBlogs(&blogs); err != nil {
+		return err
 	}
 
-	id, err := strconv.Atoi(strID)
+	return c.Status(fiber.StatusOK).JSON(blogs)
+}
+
+func GetBlog(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Sprintf("'%s' is not an integer", strID))
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	if id <= 0 {
