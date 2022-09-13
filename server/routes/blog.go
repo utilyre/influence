@@ -26,6 +26,10 @@ func GetBlogs(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Sprintf("'%s' is not an integer", strID))
 	}
 
+	if id <= 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
+	}
+
 	var blog models.Blog
 	if err := findBlog(uint(id), &blog); err != nil {
 		return err
@@ -95,6 +99,10 @@ func UpdateBlog(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
+	if id <= 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
+	}
+
 	var blog models.Blog
 	if err := c.BodyParser(&blog); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -127,6 +135,10 @@ func DeleteBlog(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	if id <= 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
 	}
 
 	var found models.Blog
