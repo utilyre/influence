@@ -66,14 +66,22 @@ func findBlog(id uint, blog *models.Blog) error {
 	return nil
 }
 
-func CreateBlog(c *fiber.Ctx) error {
-	var blog models.Blog
+func parseAndValidateBlog(c *fiber.Ctx, blog *models.Blog) error {
 	if err := c.BodyParser(&blog); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	if err := blog.Validate(); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return nil
+}
+
+func CreateBlog(c *fiber.Ctx) error {
+	var blog models.Blog
+	if err := parseAndValidateBlog(c, &blog); err != nil {
+		return nil
 	}
 
 	email := getEmailViaLocals(c)
@@ -106,12 +114,8 @@ func UpdateBlog(c *fiber.Ctx) error {
 	}
 
 	var blog models.Blog
-	if err := c.BodyParser(&blog); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	if err := blog.Validate(); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	if err := parseAndValidateBlog(c, &blog); err != nil {
+		return err
 	}
 
 	var found models.Blog
