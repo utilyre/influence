@@ -23,6 +23,23 @@ func parseAndValidateUser(c *fiber.Ctx, user *models.User, exceptions ...string)
 	return nil
 }
 
+func generateHashFromPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", fiber.ErrInternalServerError
+	}
+
+	return string(hash), nil
+}
+
+func compareHashWithPassword(hash, password string) error {
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
+	}
+
+	return nil
+}
+
 func SignUp(c *fiber.Ctx) error {
 	var user models.User
 	if err := parseAndValidateUser(c, &user); err != nil {
@@ -30,9 +47,9 @@ func SignUp(c *fiber.Ctx) error {
 	}
 
 	password := user.Password
-	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hash, err := generateHashFromPassword(user.Password)
 	if err != nil {
-		return fiber.ErrInternalServerError
+		return err
 	}
 
 	user.Password = string(hash)
@@ -55,8 +72,8 @@ func SignIn(c *fiber.Ctx) error {
 	var found models.User
 	findUser(user.Email, &found)
 
-	if err := bcrypt.CompareHashAndPassword([]byte(found.Password), []byte(user.Password)); err != nil {
-		return fiber.NewError(fiber.StatusNotFound, err.Error())
+	if err := compareHashWithPassword(found.Password, user.Password); err != nil {
+		return err
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
