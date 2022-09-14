@@ -64,7 +64,8 @@ func findBlog(id uint, blog *models.Blog) error {
 	return nil
 }
 
-func parseAndValidateBlog(c *fiber.Ctx, blog *models.Blog) error {
+func BodyBlog(c *fiber.Ctx) error {
+	var blog models.Blog
 	if err := c.BodyParser(&blog); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -73,15 +74,12 @@ func parseAndValidateBlog(c *fiber.Ctx, blog *models.Blog) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	return nil
+	c.Locals("blog", blog)
+	return c.Next()
 }
 
 func CreateBlog(c *fiber.Ctx) error {
-	var blog models.Blog
-	if err := parseAndValidateBlog(c, &blog); err != nil {
-		return nil
-	}
-
+	blog := c.Locals("blog").(models.Blog)
 	email := getEmailViaLocals(c)
 
 	var user models.User
@@ -107,11 +105,7 @@ func getEmailViaLocals(c *fiber.Ctx) string {
 
 func UpdateBlog(c *fiber.Ctx) error {
 	id := c.Locals("id").(uint)
-
-	var blog models.Blog
-	if err := parseAndValidateBlog(c, &blog); err != nil {
-		return err
-	}
+  blog := c.Locals("blog").(models.Blog)
 
 	var found models.Blog
 	if err := findBlog(id, &found); err != nil {
