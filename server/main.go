@@ -35,14 +35,12 @@ func setupRoutes(app *fiber.App) {
 	users := api.Group("/users")
 	users.Post("/signup", routes.SignUp)
 	users.Post("/signin", routes.SignIn)
-	users.Use(auth)
-	users.Get("/whoami", routes.WhoAmI)
+	users.Get("/whoami", auth, routes.WhoAmI)
 
 	blogs := api.Group("/blogs")
 	blogs.Get("/", routes.GetBlogs)
 	blogs.Get("/:id", routes.GetBlog)
-	blogs.Use(auth)
-	blogs.Post("/", routes.CreateBlog)
-	blogs.Put("/:id", routes.UpdateBlog)
-	blogs.Delete("/:id", routes.DeleteBlog)
+	blogs.Post("/", auth, routes.CreateBlog)
+	blogs.Put("/:id", auth, routes.UpdateBlog)
+	blogs.Delete("/:id", auth, routes.DeleteBlog)
 }
