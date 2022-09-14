@@ -17,24 +17,22 @@ func GetBlogs(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(blogs)
 }
 
-func getIDParam(c *fiber.Ctx) (uint, error) {
+func ParamID(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return 0, fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	if id <= 0 {
-		return 0, fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
+		return fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
 	}
 
-	return uint(id), nil
+	c.Locals("id", uint(id))
+	return c.Next()
 }
 
 func GetBlog(c *fiber.Ctx) error {
-	id, err := getIDParam(c)
-	if err != nil {
-		return err
-	}
+	id := c.Locals("id").(uint)
 
 	var blog models.Blog
 	if err := findBlog(id, &blog); err != nil {
@@ -108,10 +106,7 @@ func getEmailViaLocals(c *fiber.Ctx) string {
 }
 
 func UpdateBlog(c *fiber.Ctx) error {
-	id, err := getIDParam(c)
-	if err != nil {
-		return err
-	}
+	id := c.Locals("id").(uint)
 
 	var blog models.Blog
 	if err := parseAndValidateBlog(c, &blog); err != nil {
@@ -138,10 +133,7 @@ func UpdateBlog(c *fiber.Ctx) error {
 }
 
 func DeleteBlog(c *fiber.Ctx) error {
-	id, err := getIDParam(c)
-	if err != nil {
-		return err
-	}
+	id := c.Locals("id").(uint)
 
 	var found models.Blog
 	if err := findBlog(id, &found); err != nil {
