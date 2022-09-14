@@ -26,22 +26,55 @@ func main() {
 }
 
 func setupRoutes(app *fiber.App) {
+	api := app.Group("/api")
+
 	auth := jwtware.New(jwtware.Config{
 		SigningMethod: jwtware.HS256,
 		SigningKey:    []byte(os.Getenv("SERVER_ACCESS_TOKEN_SECRET")),
 	})
 
-	api := app.Group("/api")
-
 	users := api.Group("/users")
-	users.Post("/signup", routes.SignUp)
-	users.Post("/signin", routes.SignIn)
-	users.Get("/whoami", auth, routes.WhoAmI)
+	users.Post(
+		"/signup",
+		routes.SignUp,
+	)
+	users.Post(
+		"/signin",
+		routes.SignIn,
+	)
+	users.Get(
+		"/whoami",
+		auth,
+		routes.WhoAmI,
+	)
 
 	blogs := api.Group("/blogs")
-	blogs.Get("/", routes.GetBlogs)
-	blogs.Get("/:id", middlewares.ParamID, routes.GetBlog)
-	blogs.Post("/", auth, middlewares.BodyBlog, routes.CreateBlog)
-	blogs.Put("/:id", auth, middlewares.ParamID, middlewares.BodyBlog, routes.UpdateBlog)
-	blogs.Delete("/:id", auth, middlewares.ParamID, routes.DeleteBlog)
+	blogs.Get(
+		"/",
+		routes.GetBlogs,
+	)
+	blogs.Get(
+		"/:id",
+		middlewares.NewParamID(),
+		routes.GetBlog,
+	)
+	blogs.Post(
+		"/",
+		auth,
+		middlewares.NewBodyBlog(),
+		routes.CreateBlog,
+	)
+	blogs.Put(
+		"/:id",
+		auth,
+		middlewares.NewParamID(),
+		middlewares.NewBodyBlog(),
+		routes.UpdateBlog,
+	)
+	blogs.Delete(
+		"/:id",
+		auth,
+		middlewares.NewParamID(),
+		routes.DeleteBlog,
+	)
 }
