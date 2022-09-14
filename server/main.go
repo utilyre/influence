@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"server/database"
+	"server/middlewares"
 	"server/routes"
 
 	"github.com/gofiber/fiber/v2"
@@ -39,8 +40,8 @@ func setupRoutes(app *fiber.App) {
 
 	blogs := api.Group("/blogs")
 	blogs.Get("/", routes.GetBlogs)
-	blogs.Get("/:id", routes.ParamID, routes.GetBlog)
-	blogs.Post("/", auth, routes.BodyBlog, routes.CreateBlog)
-	blogs.Put("/:id", auth, routes.ParamID, routes.BodyBlog, routes.UpdateBlog)
-	blogs.Delete("/:id", auth, routes.ParamID, routes.DeleteBlog)
+	blogs.Get("/:id", middlewares.ParamID, routes.GetBlog)
+	blogs.Post("/", auth, middlewares.BodyBlog, routes.CreateBlog)
+	blogs.Put("/:id", auth, middlewares.ParamID, middlewares.BodyBlog, routes.UpdateBlog)
+	blogs.Delete("/:id", auth, middlewares.ParamID, routes.DeleteBlog)
 }

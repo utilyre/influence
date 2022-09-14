@@ -17,20 +17,6 @@ func GetBlogs(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(blogs)
 }
 
-func ParamID(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	if id <= 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "ensure that id is an unsigned integer")
-	}
-
-	c.Locals("id", uint(id))
-	return c.Next()
-}
-
 func GetBlog(c *fiber.Ctx) error {
 	id := c.Locals("id").(uint)
 
@@ -62,20 +48,6 @@ func findBlog(id uint, blog *models.Blog) error {
 	blog.Author.Password = ""
 
 	return nil
-}
-
-func BodyBlog(c *fiber.Ctx) error {
-	var blog models.Blog
-	if err := c.BodyParser(&blog); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	if err := blog.Validate(); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	c.Locals("blog", blog)
-	return c.Next()
 }
 
 func CreateBlog(c *fiber.Ctx) error {
