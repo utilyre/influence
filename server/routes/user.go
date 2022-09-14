@@ -11,18 +11,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func parseAndValidateUser(c *fiber.Ctx, user *models.User, exceptions ...string) error {
-	if err := c.BodyParser(&user); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	if err := user.Validate(exceptions...); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	return nil
-}
-
 func generateHashFromPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -41,10 +29,7 @@ func compareHashWithPassword(hash, password string) error {
 }
 
 func SignUp(c *fiber.Ctx) error {
-	var user models.User
-	if err := parseAndValidateUser(c, &user); err != nil {
-		return err
-	}
+	user := c.Locals("user").(models.User)
 
 	password := user.Password
 	hash, err := generateHashFromPassword(user.Password)
@@ -64,10 +49,7 @@ func SignUp(c *fiber.Ctx) error {
 }
 
 func SignIn(c *fiber.Ctx) error {
-	var user models.User
-	if err := parseAndValidateUser(c, &user, "Name"); err != nil {
-		return err
-	}
+	user := c.Locals("user").(models.User)
 
 	var found models.User
 	findUser(user.Email, &found)

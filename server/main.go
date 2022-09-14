@@ -36,10 +36,12 @@ func setupRoutes(app *fiber.App) {
 	users := api.Group("/users")
 	users.Post(
 		"/signup",
+		middlewares.NewBodyUser(),
 		routes.SignUp,
 	)
 	users.Post(
 		"/signin",
+		middlewares.NewBodyUser("Name"),
 		routes.SignIn,
 	)
 	users.Get(
