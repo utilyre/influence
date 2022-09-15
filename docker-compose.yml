@@ -39,6 +39,7 @@ services:
       - DATABASE_NAME=${DATABASE_NAME}
       - SERVER_PORT=${SERVER_PORT}
       - SERVER_ACCESS_TOKEN_SECRET=${SERVER_ACCESS_TOKEN_SECRET}
+      - CLIENT_PORT=${CLIENT_PORT}
     working_dir: /app
     volumes:
       - gopath:/go

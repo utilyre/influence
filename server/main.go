@@ -9,6 +9,7 @@ import (
 	"server/routes"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/jwt/v3"
 )
 
@@ -26,22 +27,27 @@ func main() {
 }
 
 func setupRoutes(app *fiber.App) {
-	api := app.Group("/api")
-
 	auth := jwtware.New(jwtware.Config{
 		SigningMethod: jwtware.HS256,
 		SigningKey:    []byte(os.Getenv("SERVER_ACCESS_TOKEN_SECRET")),
 	})
 
+	api := app.Group("/api")
+	api.Use(
+		cors.New(cors.Config{
+			AllowOrigins: fmt.Sprintf("http://localhost:%s", os.Getenv("CLIENT_PORT")),
+		}),
+	)
+
 	users := api.Group("/users")
 	users.Post(
 		"/signup",
-		middlewares.NewBodyUser(),
+		middlewares.NewUserParser(),
 		routes.SignUp,
 	)
 	users.Post(
 		"/signin",
-		middlewares.NewBodyUser("Name"),
+		middlewares.NewUserParser("Name"),
 		routes.SignIn,
 	)
 	users.Get(
@@ -57,26 +63,26 @@ func setupRoutes(app *fiber.App) {
 	)
 	blogs.Get(
 		"/:id",
-		middlewares.NewParamID(),
+		middlewares.NewIDGetter(),
 		routes.GetBlog,
 	)
 	blogs.Post(
 		"/",
 		auth,
-		middlewares.NewBodyBlog(),
+		middlewares.NewBlogParser(),
 		routes.CreateBlog,
 	)
 	blogs.Put(
 		"/:id",
 		auth,
-		middlewares.NewParamID(),
-		middlewares.NewBodyBlog(),
+		middlewares.NewIDGetter(),
+		middlewares.NewBlogParser(),
 		routes.UpdateBlog,
 	)
 	blogs.Delete(
 		"/:id",
 		auth,
-		middlewares.NewParamID(),
+		middlewares.NewIDGetter(),
 		routes.DeleteBlog,
 	)
 }

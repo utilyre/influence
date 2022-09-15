@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func NewBodyUser(exceptions ...string) func(*fiber.Ctx) error {
+func NewUserParser(exceptions ...string) func(*fiber.Ctx) error {
 	var user models.User
 	return func(c *fiber.Ctx) error {
 		if err := c.BodyParser(&user); err != nil {
@@ -22,7 +22,7 @@ func NewBodyUser(exceptions ...string) func(*fiber.Ctx) error {
 	}
 }
 
-func NewBodyBlog() func(*fiber.Ctx) error {
+func NewBlogParser() func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		var blog models.Blog
 		if err := c.BodyParser(&blog); err != nil {
