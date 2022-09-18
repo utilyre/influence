@@ -77,7 +77,7 @@ func getEmailViaLocals(c *fiber.Ctx) string {
 
 func UpdateBlog(c *fiber.Ctx) error {
 	id := c.Locals("id").(uint)
-  blog := c.Locals("blog").(models.Blog)
+	blog := c.Locals("blog").(models.Blog)
 
 	var found models.Blog
 	if err := findBlog(id, &found); err != nil {
