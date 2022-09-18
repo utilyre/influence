@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"server/models"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -28,9 +29,11 @@ func Connect() error {
 	for i := 0; i < 10; i++ {
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 		if err != nil {
+			time.Sleep(10 * time.Second)
 			continue
 		}
 
+		fmt.Println("Successfully connected to database")
 		break
 	}
 
