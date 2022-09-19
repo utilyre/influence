@@ -14,7 +14,7 @@ type Blog struct {
 	CreatedAt time.Time `json:"created_at" validate:"isdefault"`
 	UpdatedAt time.Time `json:"updated_at" validate:"isdefault"`
 
-	AuthorID uint `json:"-" validate:"isdefault"`
+	AuthorID uint `json:"-"`
 	Author   User `json:"author" validate:"structonly"`
 
 	Title   string `json:"title" validate:"required,min=8,max=64" gorm:"not null"`
